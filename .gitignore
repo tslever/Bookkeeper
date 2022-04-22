@@ -21,3 +21,14 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+.DS_Store
+workspace-for-Bookkeeper/Bookkeeper/.classpath
+workspace-for-Bookkeeper/Bookkeeper/.project
+workspace-for-Bookkeeper/Bookkeeper/.settings/org.eclipse.buildship.core.prefs
+workspace-for-Bookkeeper/Bookkeeper/.settings/org.eclipse.jdt.core.prefs
+workspace-for-Bookkeeper/Bookkeeper/lib/.classpath
+workspace-for-Bookkeeper/Bookkeeper/lib/.project
+workspace-for-Bookkeeper/Bookkeeper/lib/.settings/org.eclipse.buildship.core.prefs
+workspace-for-Bookkeeper/Bookkeeper/lib/.settings/org.eclipse.jdt.core.prefs
+workspace-for-Bookkeeper/Bookkeeper/src/main/resources/Account--Direct_Deposit_And_CHK.csv
+workspace-for-Bookkeeper/Bookkeeper/src/main/resources/Accounts_Database.db
