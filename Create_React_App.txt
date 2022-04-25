@@ -1,0 +1,11 @@
+
+Create React App
+
+
+npx create-react-app my-app
+cd my-app
+npm start
+
+When you’re ready to deploy to production, running npm run build will create an optimized build of your app in the build folder.
+
+

@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,6 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -35,6 +37,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.converter.FloatStringConverter;
 
 public class Bookkeeper extends Application {
 
@@ -72,13 +75,14 @@ public class Bookkeeper extends Application {
     	ObservableList<LineItem> observableList = (new DatabaseManager()).getLineItems("Direct_Deposit_And_CHK");
 
         TableColumn<LineItem, Integer> idColumn = new TableColumn<>("ID");
-        idColumn.setCellValueFactory(cellDataFeatures -> cellDataFeatures.getValue().getId().asObject()); // TODO: Change lambda expressions to object.
+        idColumn.setCellValueFactory((CellDataFeatures<LineItem, Integer> cellDataFeatures) -> { return cellDataFeatures.getValue().getId().asObject(); }); // TODO: Change lambda expressions to object.
 
         TableColumn<LineItem, Date> dateColumn = new TableColumn<>("Date");
-        dateColumn.setCellValueFactory(cellDataFeatures -> cellDataFeatures.getValue().getDate());
-        dateColumn.setCellFactory((TableColumn<LineItem, Date> param) -> new DateEditingCell());
+        dateColumn.setCellValueFactory((CellDataFeatures<LineItem, Date> cellDataFeatures) -> { return cellDataFeatures.getValue().getDate(); });
+        dateColumn.setCellFactory((TableColumn<LineItem, Date> tableColumn) -> { return new DateEditingCell(); });
+
         dateColumn.setOnEditCommit(
-    		new EventHandler<CellEditEvent<LineItem, Date>>() {
+            new EventHandler<CellEditEvent<LineItem, Date>>() {
     			@Override
     			public void handle(CellEditEvent<LineItem, Date> event) {
     				int rowIndex = event.getTablePosition().getRow();
@@ -92,9 +96,21 @@ public class Bookkeeper extends Application {
     			}
     		}                
         );
+        
+//        // The following code block acts as the above code block.
+//        dateColumn.setOnEditCommit((CellEditEvent<LineItem, Date> event) -> {
+//			int rowIndex = event.getTablePosition().getRow();
+//			Date oldDate = observableList.get(rowIndex).getDate().getValue();
+//			event.getRowValue().setDate(event.getNewValue());
+//			event.getTableView().refresh();
+//			Date newDate = observableList.get(rowIndex).getDate().getValue();
+//			System.out.println("Changed date from " + new SimpleDateFormat("yyyy-MM-dd").format(oldDate) + " to " + new SimpleDateFormat("yyyy-MM-dd").format(newDate) + ".");
+//			// TODO: update date in database.
+//			System.out.println("TODO: Update date in database.");
+//        });
 
     	TableColumn<LineItem, String> nameColumn = new TableColumn<>("Name");
-    	nameColumn.setCellValueFactory(cellDataFeatures -> cellDataFeatures.getValue().getName());
+    	nameColumn.setCellValueFactory((CellDataFeatures<LineItem, String> cellDataFeatures) -> { return cellDataFeatures.getValue().getName(); });
     	nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());     
     	nameColumn.setOnEditCommit(
     		new EventHandler<CellEditEvent<LineItem, String>>() {
@@ -113,7 +129,7 @@ public class Bookkeeper extends Application {
     	);
     	
     	TableColumn<LineItem, Account> accountAssociatedWithValueColumn = new TableColumn<>("Account Associated With Value");
-    	accountAssociatedWithValueColumn.setCellValueFactory(cellDataFeatures -> cellDataFeatures.getValue().getAccountAssociatedWithValue());
+    	accountAssociatedWithValueColumn.setCellValueFactory((CellDataFeatures<LineItem, Account> cellDataFeatures) -> { return cellDataFeatures.getValue().getAccountAssociatedWithValue(); });
     	ObservableList<Account> accountsAssociatedWithValue = FXCollections.observableArrayList(Account.values());
     	accountAssociatedWithValueColumn.setCellFactory(ComboBoxTableCell.<LineItem, Account>forTableColumn(accountsAssociatedWithValue));
     	accountAssociatedWithValueColumn.setOnEditCommit(
@@ -133,7 +149,7 @@ public class Bookkeeper extends Application {
     	);
     	
     	TableColumn<LineItem, Account> complementaryAccountColumn = new TableColumn<>("Complementary Account");
-    	complementaryAccountColumn.setCellValueFactory(cellDataFeatures -> cellDataFeatures.getValue().getComplementaryAccount());
+    	complementaryAccountColumn.setCellValueFactory((CellDataFeatures<LineItem, Account> cellDataFeatures) -> { return cellDataFeatures.getValue().getComplementaryAccount(); });
     	ObservableList<Account> complementaryAccounts = FXCollections.observableArrayList(Account.values());
     	accountAssociatedWithValueColumn.setCellFactory(ComboBoxTableCell.<LineItem, Account>forTableColumn(complementaryAccounts));
     	accountAssociatedWithValueColumn.setOnEditCommit(
@@ -153,9 +169,9 @@ public class Bookkeeper extends Application {
     	);
         
     	TableColumn<LineItem, Float> valueColumn = new TableColumn<>("Value");
-    	valueColumn.setCellValueFactory(cellDataFeatures -> cellDataFeatures.getValue().getValue().asObject());
-    	//valueColumn.setCellFactory(TextFieldTableCell.<LineItem, Float>forTableColumn(new FloatStringConverter())); 
-    	valueColumn.setCellFactory(tableColumn -> new PriceTableCell<LineItem>());
+    	valueColumn.setCellValueFactory((CellDataFeatures<LineItem, Float> cellDataFeatures) -> { return cellDataFeatures.getValue().getValue().asObject(); });
+    	valueColumn.setCellFactory(TextFieldTableCell.forTableColumn(new FloatStringConverter())); 
+    	valueColumn.setCellFactory((TableColumn<LineItem, Float> tableColumn) -> { return new PriceTableCell<LineItem>(); });
     	valueColumn.setOnEditCommit(
     		new EventHandler<CellEditEvent<LineItem, Float>>() {
     			@Override
